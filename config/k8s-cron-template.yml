@@ -1,0 +1,13 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: scheduled-job
+spec:
+  template:
+    metadata:
+      name: scheduled-job
+    spec:
+      containers:
+      - name: index.docker.io/sheltertechsf/askdarcel-api:latest
+        image: api
+      restartPolicy: OnFailure
