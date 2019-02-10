@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ServicesController < ApplicationController
-  before_action :require_admin_signed_in!, except: %i[show create destroy certify count]
+  before_action :require_admin_signed_in!, except: %i[show create destroy certify count featured]
 
   # wrap_parameters is not useful for nested JSON requests because it does not
   # wrap nested resources. It is unclear if the Rails team considers this to be
@@ -14,6 +14,20 @@ class ServicesController < ApplicationController
   def show
     service = services.find(params[:id])
     render json: ServicesWithResourcePresenter.present(service)
+  end
+
+  def featured
+    category_id = params[:category_id]
+    featured_services = services.includes(
+      resource: [
+        :address, :phones, :categories, :notes,
+        schedule: :schedule_days,
+        services: [:notes, :categories, :addresses, :eligibilities, { schedule: :schedule_days }],
+        ratings: [:review]
+      ]
+    ).where(featured_by_category_join_string, category_id)
+
+    render json: ServicesWithResourcePresenter.present(featured_services)
   end
 
   def create
@@ -159,5 +173,20 @@ class ServicesController < ApplicationController
 
   def resource
     @resource ||= Resource.find params[:resource_id] if params[:resource_id]
+  end
+
+  def featured_by_category_join_string
+    <<~'SQL'
+      services.id IN (
+        (
+          SELECT services.id
+            FROM services
+            INNER JOIN categories_services ON services.id = categories_services.service_id
+            WHERE categories_services.category_id = ?
+            AND categories_services.feature_rank > 0
+            ORDER BY categories_services.feature_rank
+        )
+      )
+    SQL
   end
 end

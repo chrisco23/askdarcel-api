@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     post :reject
     post :certify
     collection do
+      get :featured
       get :pending
       get :count
     end

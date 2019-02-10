@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b295f2d1-458d-4535-99b2-5937b65c5cb9",
+		"_postman_id": "6bc06566-eccc-4c85-af63-0b626bd223a3",
 		"name": "AskDarcel API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -209,6 +209,54 @@
 					"path": [
 						"services",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get featured services by category id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1403ee77-8baa-486c-aff1-5d081b1b2b2f",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base_url}}/services/featured?category_id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"services",
+						"featured"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "1"
+						}
 					]
 				}
 			},
